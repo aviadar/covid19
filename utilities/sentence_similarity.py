@@ -6,19 +6,24 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 
 class SentenceSimilarity:
-    def __init__(self):
+    def __init__(self, input_txt_list):
         # @param ["https://tfhub.dev/google/universal-sentence-encoder/4", "https://tfhub.dev/google/universal-sentence-encoder-large/5"]
         module_url = "https://tfhub.dev/google/universal-sentence-encoder-large/5"
         self.similarity = None
         self.model = hub.load(module_url)
         print("module %s loaded" % module_url)
+        self._sentence_similarity(input_txt_list)
 
     def _embed(self, input_txt_list):
         self.embedding = self.model(input_txt_list)
 
-    def sentence_similarity(self, input_txt_list):
+    def _sentence_similarity(self, input_txt_list):
         self._embed(input_txt_list)
         self.similarity = cosine_similarity(self.embedding)
+
+    def get_k_most_similar(self, compared_index, k):
+        topk_ind = self.similarity[compared_index, :].argsort()[-(k + 1):][::-1][1:]
+        return topk_ind, self.similarity[compared_index, :][topk_ind]
 
     def plot_similarity(self, labels=None):
         mask = np.triu(np.ones_like(self.similarity, dtype=bool))
@@ -58,7 +63,9 @@ def test_sentence_similarity():
         "what is your age?",
     ]
 
-    sentence_similarity = SentenceSimilarity()
-    sentence_similarity.sentence_similarity(messages)
+    sentence_similarity = SentenceSimilarity(messages)
+    sentence_similarity.get_k_most_similar(compared_index=2, k=3)
     sentence_similarity.plot_similarity(labels=messages)
 
+
+test_sentence_similarity()
