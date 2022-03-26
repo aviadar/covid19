@@ -31,7 +31,7 @@ class SentenceSimilarity:
             cmap="YlOrRd")
         if labels:
             g.set_xticklabels(labels, rotation=90)
-            g.set_yticklabels(labels, rotation=90)
+            g.set_yticklabels(labels, rotation=0)
         g.set_title("Semantic Textual Similarity")
         plt.show()
 
