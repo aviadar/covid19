@@ -61,6 +61,3 @@ def test_sentence_similarity():
     sentence_similarity = SentenceSimilarity()
     sentence_similarity.sentence_similarity(messages)
     sentence_similarity.plot_similarity(labels=messages)
-
-
-test_sentence_similarity()
