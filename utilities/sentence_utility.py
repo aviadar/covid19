@@ -9,7 +9,7 @@ import pandas as pd
 
 
 class SentenceUtil:
-    def __init__(self, input_txt_list):
+    def __init__(self, input_txt_list, k_clusters):
         # @param ["https://tfhub.dev/google/universal-sentence-encoder/4", "https://tfhub.dev/google/universal-sentence-encoder-large/5"]
         module_url = "https://tfhub.dev/google/universal-sentence-encoder-large/5"
         self.similarity = None
@@ -17,7 +17,7 @@ class SentenceUtil:
         self.model = hub.load(module_url)
         print("module %s loaded" % module_url)
         self._sentence_similarity(input_txt_list)
-        self._cluster_sentences(k=4)
+        self._cluster_sentences(k_clusters)
 
     def _embed(self, input_txt_list):
         self.embedding = self.model(input_txt_list)
@@ -80,7 +80,7 @@ def test_sentence_similarity():
         "what is your age?",
     ]
 
-    sentence_similarity = SentenceUtil(messages)
+    sentence_similarity = SentenceUtil(messages, k=4)
     sentence_similarity.get_k_most_similar(compared_index=2, k=3)
     sentence_similarity.plot_similarity(labels=messages)
     sentence_similarity.plot_clusters()
