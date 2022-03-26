@@ -20,7 +20,7 @@ class SentenceSimilarity:
         self._embed(input_txt_list)
         self.similarity = cosine_similarity(self.embedding)
 
-    def plot_similarity(self, labels=None, rotation=90):
+    def plot_similarity(self, labels=None):
         mask = np.triu(np.ones_like(self.similarity, dtype=bool))
         sns.set(font_scale=1.2)
         g = sns.heatmap(
@@ -30,8 +30,8 @@ class SentenceSimilarity:
             vmax=1,
             cmap="YlOrRd")
         if labels:
-            g.set_xticklabels(labels, rotation=rotation)
-            g.set_yticklabels(labels)
+            g.set_xticklabels(labels, rotation=90)
+            g.set_yticklabels(labels, rotation=90)
         g.set_title("Semantic Textual Similarity")
         plt.show()
 
@@ -61,3 +61,4 @@ def test_sentence_similarity():
     sentence_similarity = SentenceSimilarity()
     sentence_similarity.sentence_similarity(messages)
     sentence_similarity.plot_similarity(labels=messages)
+
