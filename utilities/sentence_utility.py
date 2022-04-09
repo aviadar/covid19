@@ -10,9 +10,6 @@ from sklearn.decomposition import PCA
 import pandas as pd
 import tensorflow as tf
 import tqdm
-import holoviews as hv
-
-hv.extension('matplotlib')
 
 
 class Transform(Enum):
@@ -37,17 +34,8 @@ class SentenceUtil:
     def _embed(self, input_txt_list):
         # self.embedding = self.model(input_txt_list)
         self.embedding = self.model([input_txt_list.iloc[0]])
-        # for i, txt in enumerate(input_txt_list.iloc[1:]):
-        #     print(i)
-        #     try:
-        #         self.embedding = tf.concat([self.embedding, self.model([txt])], 0)
-        #     except Exception as e:
-        #         print(e)
-        for i, txt in enumerate(tqdm.tqdm(input_txt_list.iloc[1:])):
-            try:
-                self.embedding = tf.concat([self.embedding, self.model([txt])], 0)
-            except Exception as e:
-                print(i, e)
+        for txt in tqdm.tqdm(input_txt_list.iloc[1:]):
+            self.embedding = tf.concat([self.embedding, self.model([txt])], 0)
 
     def _sentence_similarity(self, input_txt_list):
         self._embed(input_txt_list)
@@ -86,12 +74,13 @@ class SentenceUtil:
                                  columns=['index', 'component1', 'component2'])
         trans['cluster'] = self.kmeans
 
-        return hv.Scatter(data=trans, kdims=['component1', 'component2'], vdims=['index', 'cluster']).opts(color='cluster', cmap=['blue', 'orange'])
-        # sns.scatterplot(data=trans, x="component1", y="component2", hue="cluster", palette="deep")
-        # if self.input:
-        #     for i, txt in enumerate(self.input):
-        #         plt.text(trans.component1[i], trans.component2[i], txt)
-        # plt.show()
+        # return hv.Dataset(trans).to(hv.Scatter, 'component1', 'component2').overlay(['cluster', 'index'])
+        # return hv.Scatter(data=trans, kdims=['component1', 'component2'], vdims=['index', 'cluster']).opts(color='cluster')
+        sns.scatterplot(data=trans, x="component1", y="component2", hue="cluster", palette="deep")
+        if self.input:
+            for i, txt in enumerate(self.input):
+                plt.text(trans.component1[i], trans.component2[i], txt)
+        plt.show()
 
 
 def test_sentence_similarity():
