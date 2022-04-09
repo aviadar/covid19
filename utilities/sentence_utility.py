@@ -89,12 +89,12 @@ class SentenceUtil:
 
         scatter = hv.Scatter(trans, vdims=['index'])
         scatter = scatter.opts(color='cluster')
-        scatter
+        return scatter
         # sns.scatterplot(data=trans, x="component1", y="component2", hue="cluster", palette="deep")
-        if self.input:
-            for i, txt in enumerate(self.input):
-                plt.text(trans.component1[i], trans.component2[i], txt)
-        plt.show()
+        # if self.input:
+        #     for i, txt in enumerate(self.input):
+        #         plt.text(trans.component1[i], trans.component2[i], txt)
+        # plt.show()
 
 
 def test_sentence_similarity():
