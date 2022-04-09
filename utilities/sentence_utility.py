@@ -6,6 +6,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.cluster import KMeans
 from sklearn.manifold import MDS
 import pandas as pd
+import tensorflow as tf
 
 
 class SentenceUtil:
@@ -23,7 +24,9 @@ class SentenceUtil:
             self.input = input_txt_list
 
     def _embed(self, input_txt_list):
-        self.embedding = self.model(input_txt_list)
+        self.embedding = self.model([input_txt_list.iloc[0]])
+        for txt in input_txt_list.iloc[1:]:
+            self.embedding = tf.concat([self.embedding, self.model([txt])], 0)
 
     def _sentence_similarity(self, input_txt_list):
         self._embed(input_txt_list)
@@ -92,4 +95,12 @@ def test_sentence_similarity():
     sentence_similarity.plot_clusters()
 
 
-# test_sentence_similarity()
+def test_sentence_similarity_2():
+    df = pd.read_csv(r'C:\Users\aviadar\PycharmProjects\advanced_ml\covid19\covid_df.csv')
+
+    sentence_similarity = SentenceUtil(df.abstract[:10], k_clusters=4)
+    # sentence_similarity.get_k_most_similar(compared_index=2, k=3)
+    # sentence_similarity.plot_similarity(labels=messages)
+    # sentence_similarity.plot_clusters()
+
+# test_sentence_similarity_2()
