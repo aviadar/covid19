@@ -111,4 +111,4 @@ def test_sentence_similarity_2():
     # sentence_similarity.plot_similarity(labels=messages)
     # sentence_similarity.plot_clusters()
 
-test_sentence_similarity_2()
+# test_sentence_similarity_2()
