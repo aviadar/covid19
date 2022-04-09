@@ -28,7 +28,10 @@ class SentenceUtil:
         self.embedding = self.model([input_txt_list.iloc[0]])
         for i, txt in enumerate(input_txt_list.iloc[1:]):
             print(i)
-            self.embedding = tf.concat([self.embedding, self.model([txt])], 0)
+            try:
+                self.embedding = tf.concat([self.embedding, self.model([txt])], 0)
+            except Exception as e:
+                print(e)
 
     def _sentence_similarity(self, input_txt_list):
         self._embed(input_txt_list)
