@@ -11,7 +11,7 @@ import tqdm
 
 
 class SentenceUtil:
-    def __init__(self, input_txt_list, k_clusters, save_input=False):
+    def __init__(self, input_txt_list, save_input=False):
         # @param ["https://tfhub.dev/google/universal-sentence-encoder/4", "https://tfhub.dev/google/universal-sentence-encoder-large/5"]
         module_url = "https://tfhub.dev/google/universal-sentence-encoder-large/5"
         self.similarity = None
@@ -19,7 +19,7 @@ class SentenceUtil:
         self.model = hub.load(module_url)
         print("module %s loaded" % module_url)
         self._sentence_similarity(input_txt_list)
-        self._cluster_sentences(k_clusters)
+        # self._cluster_sentences(k_clusters)
         self.input = None
         if save_input:
             self.input = input_txt_list
@@ -27,19 +27,21 @@ class SentenceUtil:
     def _embed(self, input_txt_list):
         # self.embedding = self.model(input_txt_list)
         self.embedding = self.model([input_txt_list.iloc[0]])
+        # for i, txt in enumerate(input_txt_list.iloc[1:]):
+        #     print(i)
+        #     try:
+        #         self.embedding = tf.concat([self.embedding, self.model([txt])], 0)
+        #     except Exception as e:
+        #         print(e)
         for i, txt in enumerate(input_txt_list.iloc[1:]):
-            print(i)
-            try:
-                self.embedding = tf.concat([self.embedding, self.model([txt])], 0)
-            except Exception as e:
-                print(e)
+            self.embedding = tf.concat([self.embedding, self.model([txt])], 0)
 
     def _sentence_similarity(self, input_txt_list):
         self._embed(input_txt_list)
         self.similarity = cosine_similarity(self.embedding)
 
-    def _cluster_sentences(self, k):
-        self.kmeans = KMeans(n_clusters=k, random_state=0).fit(self.embedding).labels_
+    def cluster_sentences(self, k_clusters):
+        self.kmeans = KMeans(n_clusters=k_clusters, random_state=0).fit(self.embedding).labels_
 
     def get_k_most_similar(self, compared_index, k):
         topk_ind = self.similarity[compared_index, :].argsort()[-(k + 1):][::-1][1:]
