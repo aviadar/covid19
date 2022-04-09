@@ -7,6 +7,7 @@ from sklearn.cluster import KMeans
 from sklearn.manifold import MDS
 import pandas as pd
 import tensorflow as tf
+import tqdm
 
 
 class SentenceUtil:
@@ -25,7 +26,7 @@ class SentenceUtil:
 
     def _embed(self, input_txt_list):
         self.embedding = self.model([input_txt_list.iloc[0]])
-        for txt in input_txt_list.iloc[1:]:
+        for txt in tqdm.tqdm(input_txt_list.iloc[1:]):
             self.embedding = tf.concat([self.embedding, self.model([txt])], 0)
 
     def _sentence_similarity(self, input_txt_list):
