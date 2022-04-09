@@ -25,14 +25,14 @@ class SentenceUtil:
             self.input = input_txt_list
 
     def _embed(self, input_txt_list):
-        self.embedding = self.model(input_txt_list)
-        # self.embedding = self.model([input_txt_list.iloc[0]])
-        # for i, txt in enumerate(input_txt_list.iloc[1:]):
-        #     print(i)
-        #     try:
-        #         self.embedding = tf.concat([self.embedding, self.model([txt])], 0)
-        #     except Exception as e:
-        #         print(e)
+        # self.embedding = self.model(input_txt_list)
+        self.embedding = self.model([input_txt_list.iloc[0]])
+        for i, txt in enumerate(input_txt_list.iloc[1:]):
+            print(i)
+            try:
+                self.embedding = tf.concat([self.embedding, self.model([txt])], 0)
+            except Exception as e:
+                print(e)
 
     def _sentence_similarity(self, input_txt_list):
         self._embed(input_txt_list)
