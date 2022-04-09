@@ -9,7 +9,7 @@ import pandas as pd
 
 
 class SentenceUtil:
-    def __init__(self, input_txt_list, k_clusters):
+    def __init__(self, input_txt_list, k_clusters, save_input=False):
         # @param ["https://tfhub.dev/google/universal-sentence-encoder/4", "https://tfhub.dev/google/universal-sentence-encoder-large/5"]
         module_url = "https://tfhub.dev/google/universal-sentence-encoder-large/5"
         self.similarity = None
@@ -18,6 +18,9 @@ class SentenceUtil:
         print("module %s loaded" % module_url)
         self._sentence_similarity(input_txt_list)
         self._cluster_sentences(k_clusters)
+        self.input = None
+        if save_input:
+            self.input = input_txt_list
 
     def _embed(self, input_txt_list):
         self.embedding = self.model(input_txt_list)
@@ -55,6 +58,9 @@ class SentenceUtil:
         mds['cluster'] = self.kmeans
 
         sns.scatterplot(data=mds, x="component1", y="component2", hue="cluster")
+        if self.input:
+            for i, txt in enumerate(self.input):
+                plt.text(mds.component1[i], mds.component2[i], txt)
         plt.show()
 
 
@@ -80,7 +86,7 @@ def test_sentence_similarity():
         "what is your age?",
     ]
 
-    sentence_similarity = SentenceUtil(messages, k=4)
+    sentence_similarity = SentenceUtil(messages, k_clusters=4, save_input=True)
     sentence_similarity.get_k_most_similar(compared_index=2, k=3)
     sentence_similarity.plot_similarity(labels=messages)
     sentence_similarity.plot_clusters()
