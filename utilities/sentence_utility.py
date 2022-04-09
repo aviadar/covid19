@@ -10,6 +10,9 @@ from sklearn.decomposition import PCA
 import pandas as pd
 import tensorflow as tf
 import tqdm
+import holoviews as hv
+
+hv.extension('matplotlib')
 
 
 class Transform(Enum):
@@ -76,15 +79,18 @@ class SentenceUtil:
 
         if transform == Transform.MDS:
             embedding = MDS(n_components=2)
-            trans = pd.DataFrame(embedding.fit_transform(self.embedding),
-                                 columns=['component1', 'component2'])
+            trans = pd.DataFrame(np.concatenate((np.arange(self.embedding.shape[0]).reshape(self.embedding.shape[0],-1), embedding.fit_transform(self.embedding)), axis=1),
+                                 columns=['index', 'component1', 'component2'])
         elif transform == Transform.PCA:
             embedding = PCA(n_components=2).fit_transform(self.embedding)
-            trans = pd.DataFrame(embedding,
-                                 columns=['component1', 'component2'])
+            trans = pd.DataFrame(np.concatenate((np.arange(embedding.shape[0]).reshape(embedding.shape[0],-1), embedding), axis=1),
+                                 columns=['index', 'component1', 'component2'])
         trans['cluster'] = self.kmeans
 
-        sns.scatterplot(data=trans, x="component1", y="component2", hue="cluster")
+        scatter = hv.Scatter(trans, vdims=['index'])
+        scatter = scatter.opts(color='cluster')
+        scatter
+        # sns.scatterplot(data=trans, x="component1", y="component2", hue="cluster", palette="deep")
         if self.input:
             for i, txt in enumerate(self.input):
                 plt.text(trans.component1[i], trans.component2[i], txt)
