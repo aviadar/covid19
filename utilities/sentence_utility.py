@@ -33,7 +33,7 @@ class SentenceUtil:
         #         self.embedding = tf.concat([self.embedding, self.model([txt])], 0)
         #     except Exception as e:
         #         print(e)
-        for i, txt in enumerate(input_txt_list.iloc[1:]):
+        for i, txt in enumerate(tqdm.tqdm(input_txt_list.iloc[1:])):
             self.embedding = tf.concat([self.embedding, self.model([txt])], 0)
 
     def _sentence_similarity(self, input_txt_list):
