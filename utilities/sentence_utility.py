@@ -76,7 +76,6 @@ class SentenceUtil:
         plt.show()
 
     def plot_clusters(self, transform=Transform.PCA):
-
         if transform == Transform.MDS:
             embedding = MDS(n_components=2)
             trans = pd.DataFrame(np.concatenate((np.arange(self.embedding.shape[0]).reshape(self.embedding.shape[0],-1), embedding.fit_transform(self.embedding)), axis=1),
@@ -87,9 +86,7 @@ class SentenceUtil:
                                  columns=['index', 'component1', 'component2'])
         trans['cluster'] = self.kmeans
 
-        scatter = hv.Scatter(trans, vdims=['index'])
-        scatter = scatter.opts(color='cluster')
-        return scatter
+        return hv.Scatter(data=trans, kdims=['component1', 'component2'], vdims=['index']).opts(color='cluster', cmap=['blue', 'orange'])
         # sns.scatterplot(data=trans, x="component1", y="component2", hue="cluster", palette="deep")
         # if self.input:
         #     for i, txt in enumerate(self.input):
