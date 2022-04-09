@@ -86,7 +86,7 @@ class SentenceUtil:
                                  columns=['index', 'component1', 'component2'])
         trans['cluster'] = self.kmeans
 
-        return hv.Scatter(data=trans, kdims=['component1', 'component2'], vdims=['index']).opts(color='cluster', cmap=['blue', 'orange'])
+        return hv.Scatter(data=trans, kdims=['component1', 'component2'], vdims=['index', 'cluster']).opts(color='cluster', cmap=['blue', 'orange'])
         # sns.scatterplot(data=trans, x="component1", y="component2", hue="cluster", palette="deep")
         # if self.input:
         #     for i, txt in enumerate(self.input):
