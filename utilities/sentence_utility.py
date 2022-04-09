@@ -1,3 +1,4 @@
+from enum import Enum, auto
 import tensorflow_hub as hub
 import matplotlib.pyplot as plt
 import numpy as np
@@ -5,9 +6,15 @@ import seaborn as sns
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.cluster import KMeans
 from sklearn.manifold import MDS
+from sklearn.decomposition import PCA
 import pandas as pd
 import tensorflow as tf
 import tqdm
+
+
+class Transform(Enum):
+    MDS = auto()
+    PCA = auto()
 
 
 class SentenceUtil:
@@ -65,16 +72,22 @@ class SentenceUtil:
         g.set_title("Semantic Textual Similarity")
         plt.show()
 
-    def plot_clusters(self):
-        embedding = MDS(n_components=2)
-        mds = pd.DataFrame(embedding.fit_transform(self.embedding),
-                           columns=['component1', 'component2'])
-        mds['cluster'] = self.kmeans
+    def plot_clusters(self, transform=Transform.PCA):
 
-        sns.scatterplot(data=mds, x="component1", y="component2", hue="cluster")
+        if transform == Transform.MDS:
+            embedding = MDS(n_components=2)
+            trans = pd.DataFrame(embedding.fit_transform(self.embedding),
+                                 columns=['component1', 'component2'])
+        elif transform == Transform.PCA:
+            embedding = PCA(n_components=2).fit_transform(self.embedding)
+            trans = pd.DataFrame(embedding,
+                                 columns=['component1', 'component2'])
+        trans['cluster'] = self.kmeans
+
+        sns.scatterplot(data=trans, x="component1", y="component2", hue="cluster")
         if self.input:
             for i, txt in enumerate(self.input):
-                plt.text(mds.component1[i], mds.component2[i], txt)
+                plt.text(trans.component1[i], trans.component2[i], txt)
         plt.show()
 
 
@@ -109,9 +122,10 @@ def test_sentence_similarity():
 def test_sentence_similarity_2():
     df = pd.read_csv(r'C:\Users\aviadar\PycharmProjects\advanced_ml\covid19\covid_df.csv')
 
-    sentence_similarity = SentenceUtil(df.abstract[1000:], k_clusters=4)
+    sentence_similarity = SentenceUtil(df.abstract[:10])
     # sentence_similarity.get_k_most_similar(compared_index=2, k=3)
     # sentence_similarity.plot_similarity(labels=messages)
-    # sentence_similarity.plot_clusters()
+    sentence_similarity.cluster_sentences(k_clusters=3)
+    sentence_similarity.plot_clusters()
 
 # test_sentence_similarity_2()
