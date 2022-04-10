@@ -32,10 +32,12 @@ class SentenceUtil:
             self.input = input_txt_list
 
     def _embed(self, input_txt_list):
-        # self.embedding = self.model(input_txt_list)
-        self.embedding = self.model([input_txt_list.iloc[0]])
-        for txt in tqdm.tqdm(input_txt_list.iloc[1:]):
-            self.embedding = tf.concat([self.embedding, self.model([txt])], 0)
+        if type(input_txt_list) == list:
+            self.embedding = self.model(input_txt_list)
+        else:  # DataFrame
+            self.embedding = self.model([input_txt_list.iloc[0]])
+            for txt in tqdm.tqdm(input_txt_list.iloc[1:]):
+                self.embedding = tf.concat([self.embedding, self.model([txt])], 0)
 
     def _sentence_similarity(self, input_txt_list):
         self._embed(input_txt_list)
