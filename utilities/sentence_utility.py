@@ -18,7 +18,7 @@ class Transform(Enum):
 
 
 class SentenceUtil:
-    def __init__(self, input_txt_list, save_input=False, module_url = "https://tfhub.dev/google/universal-sentence-encoder-large/5"):
+    def __init__(self, input_txt_list, save_input=False, module_url="https://tfhub.dev/google/universal-sentence-encoder-large/5"):
         # @param ["https://tfhub.dev/google/universal-sentence-encoder/4", "https://tfhub.dev/google/universal-sentence-encoder-large/5"]
         # module_url = "https://tfhub.dev/google/universal-sentence-encoder-large/5"
         self.similarity = None
